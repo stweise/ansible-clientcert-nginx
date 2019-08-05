@@ -1,3 +1,4 @@
-- src: https://github.com/pbonrad/ansible-easyrsa
+- src: https://github.com/stweise/ansible-easyrsa
+  scm: git
   version: master
 
