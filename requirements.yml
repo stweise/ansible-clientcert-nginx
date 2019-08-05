@@ -1,0 +1,3 @@
+- src: https://github.com/pbonrad/ansible-easyrsa
+  version: master
+
