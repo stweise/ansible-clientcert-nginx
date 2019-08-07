@@ -15,5 +15,12 @@
     easyrsa_digest: "sha256"
     easyrsa_clients:
       - name: client1
+      - name: client2
+      - name: client3
+#    easyrsa_revoked_clients:
+#      - name: client1
+#      - name: client2
+#      - name: client3
+
   roles:
     - ansible-easyrsa
