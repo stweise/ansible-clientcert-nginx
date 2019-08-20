@@ -1,0 +1,4 @@
+simply install the resulting pfx in the browser or in your keychain
+Firefox (Mac OS X) -> install in browser
+Chrome (Mac OS X) -> install in keychain
+Chrome (Linux) -> install in browser under chrome://settings/certificates

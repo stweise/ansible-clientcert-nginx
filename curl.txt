@@ -1,0 +1,17 @@
+given:
+* Certificate file: seb.full.pfx
+* known export pasword: ********
+
+openssl pkcs12 -in seb.full.pfx -out seb_root.pem -cacerts
+enter password 3 times
+
+openssl pkcs12 -in seb.full.pfx -out seb_clients.pem -clcerts
+enter password 3 times
+
+
+# should be using this line
+# curl --cacert seb_root.pem --cert seb_clients.pem https://mon.voidp.de
+# however the self signed certificate is not trusted on my system (yet) using -k relaxes on this error
+curl -k --cacert seb_root.pem --cert seb_clients.pem https://mon.voidp.de
+enter password 1 time
+
