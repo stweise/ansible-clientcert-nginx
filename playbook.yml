@@ -1,7 +1,7 @@
 ---
 - name: Install easy-rsa and create keys
   hosts: all
-  #  become: true
+  become: true
   vars:
     easyrsa_dest: "/home/stweise/git/ansible-clientcert-nginx/build"
     easyrsa_dn: "cn_only"
@@ -43,3 +43,35 @@
   roles:
     - ansible-easyrsa
       #    - nginxinc.nginx
+  tasks:
+    - name: "Creates directory for client certs in PEM format"
+      file:
+        path: "{{easyrsa_dest}}/easyrsa3/pki/issued_pem"
+        state: directory
+    - name: "Create the client certs in PEM format"
+      command: "openssl x509 -in {{item.name}}.crt -out ../issued_pem/{{item.name}}.pem -outform PEM"
+      args:
+        chdir: "{{easyrsa_dest}}/easyrsa3/pki/issued"
+        creates: "{{easyrsa_dest}}/easyrsa3/pki/issued_pem/{{item.name}}.pem"
+      with_items: "{{ easyrsa_clients }}"
+    - name: "Create the CA cert in PEM format"
+      command: "openssl x509 -in ca.crt -out ca.pem -outform PEM"
+      args:
+        chdir: "{{easyrsa_dest}}/easyrsa3/pki"
+        creates: "{{easyrsa_dest}}/easyrsa3/pki/ca.pem"
+    - name: "Create the client full cert including chain in PEM format"
+      shell: "cat {{easyrsa_dest}}/easyrsa3/pki/private/{{item.name}}.key {{easyrsa_dest}}/easyrsa3/pki/issued_pem/{{item.name}}.pem {{easyrsa_dest}}/easyrsa3/pki/ca.pem > {{item.name}}.full.pem"
+      args:
+        chdir: "{{easyrsa_dest}}/easyrsa3/pki/issued_pem"
+        creates: "{{easyrsa_dest}}/easyrsa3/pki/issued_pem/{{item.name}}.full.pem"
+      with_items: "{{ easyrsa_clients }}"
+    - name: "Creates directory for client certs in PFX format"
+      file:
+        path: "{{easyrsa_dest}}/easyrsa3/pki/issued_pfx"
+        state: directory
+    - name: "Create the client PKCS#12 archive in PFX format"
+      command: "openssl pkcs12 -export -out {{easyrsa_dest}}/easyrsa3/pki/issued_pfx/{{item.name}}.pfx -inkey {{easyrsa_dest}}/easyrsa3/pki/private/{{item.name}}.key -in {{easyrsa_dest}}/easyrsa3/pki/issued_pem/{{item.name}}.pem -certfile {{easyrsa_dest}}/easyrsa3/pki/ca.pem -passout pass: "
+      args:
+        chdir: "{{easyrsa_dest}}/easyrsa3/pki"
+        creates: "{{easyrsa_dest}}/easyrsa3/pki/issued_pfx/{{item.name}}.pfx"
+      with_items: "{{ easyrsa_clients }}"
