@@ -25,8 +25,8 @@
     nginx_http_template_enable: true
     nginx_http_template:
       default:
-        template_file: http/default.conf.j2
-        conf_file_name: default.conf
+        template_file: nginx/def.conf.j2
+        conf_file_name: def.conf
         conf_file_location: /etc/nginx/conf.d/
         port: 443
         server_name: localhost
@@ -42,7 +42,7 @@
           http_demo_conf: false
   roles:
     - ansible-easyrsa
-      #    - nginxinc.nginx
+    - nginxinc.nginx
   tasks:
     - name: "Creates directory for client certs in PEM format"
       file:

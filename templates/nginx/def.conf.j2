@@ -1,0 +1,22 @@
+server {
+  listen 443;
+  access_log  /var/log/clientcert.access.log;
+  error_log   /var/log/clientcert.error.log;
+  root /var/www/clientcert;
+  server_tokens off;
+  gzip on;
+  gzip_types * ;
+  gunzip on;
+
+  # SSL for securing the connection to the server
+  # replace with officially signed keys from big CA (use letsencrypt if in doubt)
+  ssl_certificate /etc/letsencrypt/live/voidp.de/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/voidp.de/privkey.pem;
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  # SSL for verifying the client
+  ssl_client_certificate {{easyrsa_dest}}/easyrsa3/pki/ca.crt;
+  ssl_crl {{easyrsa_dest}}/easyrsa3/pki/crl.pem;
+  ssl_verify_client on;
+}
